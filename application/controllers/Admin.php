@@ -22,13 +22,10 @@ class Admin extends CI_Controller {
         $data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása"; // the title of the page
        
 		$this->load->model('Left_model');
-		$resMain=$this->Left_model->getMainTitle();
+		$data['terulet']=$this->Left_model->getMainTitle();
 		$data['email']=$this->Left_model->getProfile();
-		$newsletter=$this->Left_model->getUserNewsLetter();
-		$data['letter']=$newsletter;
-		$data['terulet']=$resMain;
+		$data['letter']=$this->Left_model->getUserNewsLetter();
 		 $this->load->view('templates/headerAdmin', $data);
-		 
 			if (isset($_GET['keres']))
 			{
 			$resChild=$this->Left_model->getChild($_GET['keres']);
@@ -128,6 +125,16 @@ public function create()
 		$this->load->view('admin/'.$page, $data);
 		 $this->load->view('templates/footer', $data);
 	}
+	public function newUjsag($page="newUjsag")
+	{
+		$this->load->model('Left_model');
+		$data['szulok']=$this->Left_model->getlvl2Them();
+		$data['temak']=$this->Left_model->getAllUjsag();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$this->load->view('templates/headerAdmin', $data);
+		$this->load->view('admin/'.$page, $data);
+		 $this->load->view('templates/footer', $data);
+	}
 	public function newThemLvl1($page="newThem")
 	{
 		$this->load->model('Left_model');
@@ -144,6 +151,35 @@ public function create()
 		$this->Left_model->newThemLvl2();
 		$data['temak']=$this->Left_model->getlvl2Them();
 		$data['szulok']=$this->Left_model->getlvl1Them();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$this->load->view('templates/headerAdmin', $data);
+		$this->load->view('admin/'.$page, $data);
+		$this->load->view('templates/footer', $data);
+	}
+	public function addUjsag($page="newUjsag")
+	{
+		$this->load->model('Left_model');
+		$this->Left_model->addUjsag();
+		$data['szulok']=$this->Left_model->getlvl2Them();
+		$data['temak']=$this->Left_model->getAllUjsag();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$this->load->view('templates/headerAdmin', $data);
+		$this->load->view('admin/'.$page, $data);
+		$this->load->view('templates/footer', $data);
+	}
+	public function editUsers($page="editUser")
+	{
+		$this->load->model('Left_model');
+		$data['users']=$this->Left_model->getAllUser();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$this->load->view('templates/headerAdmin', $data);
+		$this->load->view('admin/'.$page, $data);
+		$this->load->view('templates/footer', $data);
+	}
+	public function sendContent($page="sendContent")
+	{
+		$this->load->model('Left_model');
+		$data['contents']=$this->Left_model->getContent();
 		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
 		$this->load->view('templates/headerAdmin', $data);
 		$this->load->view('admin/'.$page, $data);
@@ -209,6 +245,110 @@ $i=$i+2;
 
 echo'
 </table>
+</div>';
+	}
+public function EFTmegjelent()
+	{
+		
+		$this->load->model('Left_model');
+		$this->load->helper('form');
+		$this->Left_model->EFTmegjelent();
+		$temak=$this->Left_model->getAllUjsag();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		
+		echo'<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
+	<th scope="col">ID</th>
+      <th scope="col">Név</th>
+      <th scope="col">szülő</th>
+      <th scope="col">Eft-ben Megjelenet</th>
+      <th scope="col">Eka-ben Megjelenet</th>
+      <th scope="col">Töröl</th>
+      <th scope="col">Módosít</th>
+    </tr>
+  </thead>
+  <tbody>';
+    
+
+for($i=0; $i<count($temak)-4;$i++)
+{
+echo '<tr id=sor_'.$temak[$i].'><th scope="row">'.$temak[$i].'</th>
+      <td id=nev_'.$temak[$i].'>'.$temak[$i+1].'</td>
+      <td>'.$temak[$i+2].'</td>
+      <td>';if($temak[$i+3]==1)
+	  {
+		  echo form_checkbox('eft_megjelent_'.$temak[$i], '1', true,"onclick='changeEFT(".$temak[$i].")'")."Megjelent";
+	  }
+	  else
+	  {
+		 echo form_checkbox('eft_megjelent_'.$temak[$i], '0', false,"onclick='changeEFT(".$temak[$i].")'")."Nem jelent meg"; 
+	  }echo'</td>
+      <td>';if($temak[$i+4]==1)
+	  {
+		  echo form_checkbox('eka_megjelent_'.$temak[$i], '1', true,"onclick='changeEKA(".$temak[$i].")'")."Megjelent";
+	  }
+	  else
+	  {
+		 echo form_checkbox('eka_megjelent_'.$temak[$i], '0', false,"onclick='changeEKA(".$temak[$i].")'")."Nem jelent meg"; 
+	  }echo'</td>
+      <td> <button onclick=deletethem('.$temak[$i].')  class="btn btn-danger">Törlés</button></td>
+      <td><button onclick=modThem('.$temak[$i].') class="btn btn-warning">Módosít</button></tr>';
+$i=$i+4;	  
+}
+echo '</table>
+</div>';
+	}
+	public function EKAmegjelent()
+	{
+		
+		$this->load->model('Left_model');
+		$this->load->helper('form');
+		$this->Left_model->EKAmegjelent();
+		$temak=$this->Left_model->getAllUjsag();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		
+		echo'<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
+	<th scope="col">ID</th>
+      <th scope="col">Név</th>
+      <th scope="col">szülő</th>
+      <th scope="col">Eft-ben Megjelenet</th>
+      <th scope="col">Eka-ben Megjelenet</th>
+      <th scope="col">Töröl</th>
+      <th scope="col">Módosít</th>
+    </tr>
+  </thead>
+  <tbody>';
+    
+
+for($i=0; $i<count($temak)-4;$i++)
+{
+echo '<tr id=sor_'.$temak[$i].'><th scope="row">'.$temak[$i].'</th>
+      <td id=nev_'.$temak[$i].'>'.$temak[$i+1].'</td>
+      <td>'.$temak[$i+2].'</td>
+      <td>';if($temak[$i+3]==1)
+	  {
+		  echo form_checkbox('eft_megjelent_'.$temak[$i], '1', true,"onclick='changeEFT(".$temak[$i].")'")."Megjelent";
+	  }
+	  else
+	  {
+		 echo form_checkbox('eft_megjelent_'.$temak[$i], '0', false,"onclick='changeEFT(".$temak[$i].")'")."Nem jelent meg"; 
+	  }echo'</td>
+      <td>';if($temak[$i+4]==1)
+	  {
+		  echo form_checkbox('eka_megjelent_'.$temak[$i], '1', true,"onclick='changeEKA(".$temak[$i].")'")."Megjelent";
+	  }
+	  else
+	  {
+		 echo form_checkbox('eka_megjelent_'.$temak[$i], '0', false,"onclick='changeEKA(".$temak[$i].")'")."Nem jelent meg"; 
+	  }echo'</td>
+      <td> <button onclick=deletethem('.$temak[$i].')  class="btn btn-danger">Törlés</button></td>
+      <td><button onclick=modThem('.$temak[$i].') class="btn btn-warning">Módosít</button></tr>';
+$i=$i+4;	  
+}
+echo '</table>
 </div>';
 	}
 

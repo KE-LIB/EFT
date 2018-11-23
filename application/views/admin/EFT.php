@@ -1,8 +1,4 @@
-﻿<?php 
-	
-?>
-
-	<div class="container">
+﻿	<div class="container">
 	<div class="row">
 	<div class=col-md-2>
 					<button id="showMenu">Témák</button>
@@ -29,7 +25,7 @@ if(isset($message))
 			 <div class="container">
 		<?php
 		$this->load->helper('form');
-		echo form_open('User/create'); 		
+		echo form_open('Admin/create'); 		
 		echo '<div ><span style="color:#004d00;">magyar<input type=checkbox id=filter1 onClick=Filter() checked> </span><span style="color: #0099ff;">külföldi </span><input type=checkbox id=filter2 onClick=Filter() checked></div>';
 			for($i=0;$i<count($child);$i++)
 		{
@@ -98,9 +94,6 @@ if(isset($message))
 			 <div class="card-text" >
 			</div>';
 	}
-	
-
-
 	?>
 					 </div><!-- /col -->
 					 </div><!-- /col -->
@@ -111,12 +104,12 @@ if(isset($message))
 					</div><!-- /main -->
 				</div><!-- wrapper -->
 			</div><!-- /container -->
-			
+	
 			<nav class="outer-nav right vertical"><br><br>
 			<?php
 			 for($i=0;$i<count($terulet);$i++)
 	{
-	  echo anchor('User/view/EFT?&keres='.$terulet[$i]->t_azon,$terulet[$i]->terulet_kif);
+	  echo anchor('Admin/view/EFT?&keres='.$terulet[$i]->t_azon,$terulet[$i]->terulet_kif);
 		
 	}?>
 		        

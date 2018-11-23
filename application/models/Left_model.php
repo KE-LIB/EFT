@@ -164,6 +164,7 @@ return $di;
 	$this->db->select('*');	
 	 $this->db->from('terulet'); 	
 	 $this->db->where('szint','11');
+	 $this->db->order_by('terulet_kif','asc');
 	 $query = $this->db->get();
 	 $res=$query->result();
 	 return $res;
@@ -195,6 +196,98 @@ return $di;
 		
 	 }
 	 return $array_a;
+
+ }
+ public function getAllUjsag()
+ {
+	$this->load->database();		
+	$this->db->select('*');	
+	 $this->db->from('terulet'); 	
+	 $this->db->where('szint <','11');
+	 $this->db->order_by('szulo','asc');
+	 $this->db->distinct();
+	 $query = $this->db->get();
+	 $res=$query->result();
+	 $array_a=array();
+	 foreach($res as $row)
+	 {
+		$this->db->select('terulet_kif');	
+		$this->db->from('terulet'); 	
+		$this->db->where('t_azon',$row->szulo);
+		$query1 = $this->db->get();
+		$res1=$query1->result();
+		array_push($array_a,$row->t_azon);
+		array_push($array_a,$row->terulet_kif);
+		if($query1->num_rows()==0)
+		{
+			array_push($array_a,"nincs meg a szülő!");
+		}
+		else{
+		foreach($res1 as $row1)
+		{
+		array_push($array_a,$row1->terulet_kif);
+		}
+		}
+		array_push($array_a,$row->eft_megjel);
+		array_push($array_a,$row->eka_megjel);
+	 }
+	 return $array_a;
+
+ }
+ public function getAllUser() {
+	$this->load->database();		
+	$this->db->select('*');	
+	 $this->db->from('felhasznalo'); 	
+	 $this->db->order_by('f_azon','asc');
+	 $this->db->distinct();
+	 $query = $this->db->get();
+	 $res=$query->result();
+	 return $res;
+
+ }
+ public function getContent() {
+	$this->load->database();		
+	$this->db->select('*');	
+	 $this->db->from('terulet'); 	
+	 $this->db->where('szint <','11'); 	
+	 $this->db->where('eft_megjel','1'); 	
+	 $this->db->order_by('t_azon','asc');
+	 $this->db->distinct();
+	 $query = $this->db->get();
+	 $res=$query->result();
+	 $array_res=array();
+	 foreach($res as $row)
+	 {
+		array_push($array_res,$row->terulet_kif);
+		$this->db->select('COUNT(f_azon) as db');	
+		$this->db->from('hirlevel'); 	
+		$this->db->where('t_azon',$row->t_azon); 	
+		$query1 = $this->db->get();
+		$res1=$query1->result();
+		foreach($res as $row1)
+		{
+			array_push($array_res,$row1->db);
+		}
+		$this->db->select('f_azon');	
+		$this->db->from('hirlevel'); 	
+		$this->db->where('t_azon',$row->t_azon); 	
+		$query2 = $this->db->get();
+		$res2=$query2->result();
+			foreach($res2 as $row2)
+			{
+				$this->db->select('e_mail');	
+				$this->db->from('felhasznalo'); 	
+				$this->db->where('f_azon',$row2->f_azon); 	
+				$query3 = $this->db->get();
+				$res3=$query3->result();
+				foreach($res3 as $row3)
+					{
+						
+					}
+			}
+		 
+	 }
+	 return $res;
 
  }
  public function newThemLvl1()
@@ -257,6 +350,39 @@ else{
 
  }
  }
+ public function addUjsag()
+ {
+	$this->load->database();	
+	$tema=$this->input->post('tema');
+	$kulf=$this->input->post('kulfoldi');
+	$szulo=$this->input->post('szulo');
+	if($kulf==1)
+	{}
+else{$kulf=0;}
+	if($szulo==0)
+	{
+}
+else{
+	$data =array(
+					'szint'=>'0',
+					'eka_szint'=>'0',
+					'szulo'=>$szulo,
+					'kulfoldi'=>$kulf,
+					'terulet_kif'=>$tema,
+					'tart_jegyz'=>'0',
+					'issn'=>'0000-0000',
+					'sorrend'=>'0',
+					'eft_megjel'=>'1',
+					'eka_megjel'=>'1',
+					);
+					
+			$this->db->trans_start();
+			$this->db->insert('terulet',$data);
+			$eid=$this->db->insert_id();
+			$this->db->trans_complete();  
+
+ }
+ }
  public function deleteThem()
  {
 	$this->load->database();	
@@ -277,6 +403,54 @@ else{
 	 $this->db->delete('terulet');
 	
 
+ }
+ public function EFTmegjelent()
+ {
+	$this->load->database();	
+	$id=$this->input->post('id');
+	$this->db->select('eft_megjel');	
+	 $this->db->from('terulet'); 	
+	 $this->db->where('t_azon',$id);
+	 $query = $this->db->get();
+	 $res=$query->result();
+	 foreach($res as $row)
+	 {
+	
+	if($row->eft_megjel==1)
+	{
+		$this->db->set('eft_megjel', '0');
+	}
+	else
+	{
+	$this->db->set('eft_megjel', '1');	
+	}
+		$this->db->where('t_azon', $id);
+		$this->db->update('terulet');
+	 }
+ }
+ public function EKAmegjelent()
+ {
+	$this->load->database();	
+	$id=$this->input->post('id');
+	$this->db->select('eka_megjel');	
+	 $this->db->from('terulet'); 	
+	 $this->db->where('t_azon',$id);
+	 $query = $this->db->get();
+	 $res=$query->result();
+	 foreach($res as $row)
+	 {
+	
+	if($row->eft_megjel==1)
+	{
+		$this->db->set('eka_megjel', '0');
+	}
+	else
+	{
+	$this->db->set('eka_megjel', '1');	
+	}
+		$this->db->where('t_azon', $id);
+		$this->db->update('terulet');
+	 }
  }
  
  

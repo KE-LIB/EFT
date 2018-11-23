@@ -1,7 +1,7 @@
 <div class="container-fluid">
-A módosítással töröljük  az adott témát és újra mindent hozzá kell rendelni!
+<img src=<?php echo base_url()."images/info.png";?> width=50px height=50px title="A módosítással töröljük  az adott témát és újra mindent hozzá kell rendelni!">
 <div class="row"><div class="col-sm-8">
-<h1>Meglévő altémák témák</h1>
+<h1>Meglévő altémák</h1>
 <div style="overflow: auto;height:550px;" id="lvl1them">
 <table class="table table-striped">
   <thead class="thead-dark">
@@ -31,7 +31,7 @@ $i=$i+2;
 </div>
 </div>
 <div class="col-sm-4">
-<h1>Új téma felvitele</h1>
+<h1>Új altéma felvitele</h1>
 
 <?php
 $this->load->helper('form');

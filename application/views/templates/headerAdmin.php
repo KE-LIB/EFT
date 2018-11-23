@@ -40,9 +40,10 @@
             <li class="nav-item"><?php echo anchor('Admin/view/editProfile','Profilbeállítások','class="nav-link"');?></li>
             <li class="nav-item "><?php echo anchor('Admin/newThem/newThem','Új téma','class="nav-link"');?></li>
             <li class="nav-item "><?php echo anchor('Admin/newAlThem/newAlThem','Új almtéma/altémák szerkesztése','class="nav-link"');?></li>
-            <li class="nav-item "><?php echo anchor('Admin/logout/logout','Újságokfelvitel/szerkesztése_','class="nav-link"');?></li>
-            <li class="nav-item "><?php echo anchor('Admin/logout/logout','Felhasználók szerkesztése_','class="nav-link"');?></li>
-            <li class="nav-item "><?php echo anchor('Admin/logout/logout','Admin','class="nav-link"');?></li>
+            <li class="nav-item "><?php echo anchor('Admin/newUjsag/newUjsag','Újságokfelvitel/szerkesztése','class="nav-link"');?></li>
+            <li class="nav-item "><?php echo anchor('Admin/editUsers/editUsers','Felhasználók szerkesztése_','class="nav-link"');?></li>
+            <li class="nav-item "><?php echo anchor('Admin/sendContent/sendContent','Tartalom kiküldés_','class="nav-link"');?></li>
+			<li class="nav-item "><?php echo anchor('Admin/logout/logout','Statisztika_','class="nav-link"');?></li>
             <li class="nav-item "><?php echo anchor('Admin/logout/logout','Kijelentkezés','class="nav-link"');?></li></ul>
         </div><!--/.nav-collapse --> 
 		</nav>		
