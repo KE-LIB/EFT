@@ -16,7 +16,7 @@ class Left_model extends CI_Model {
 			$this->load->database();
 			if (!isset($keres))
 			{
-			$query = $this->db->query("SELECT terulet_kif,t_azon FROM terulet where szint='11' and eft_megjel='1'");
+			$query = $this->db->query("SELECT NEV as terulet_kif,ID as t_azon FROM fotema  where EFT='1'");
 			}
 			$res=$query->result();
             return $res;
@@ -251,20 +251,23 @@ return $di;
 	 $this->db->from('terulet'); 	
 	 $this->db->where('szint <','11'); 	
 	 $this->db->where('eft_megjel','1'); 	
-	 $this->db->order_by('t_azon','asc');
+	 $this->db->order_by('terulet_kif','asc');
 	 $this->db->distinct();
 	 $query = $this->db->get();
 	 $res=$query->result();
 	 $array_res=array();
 	 foreach($res as $row)
 	 {
+		array_push($array_res,"phase0");
+		array_push($array_res,$row->t_azon);
 		array_push($array_res,$row->terulet_kif);
 		$this->db->select('COUNT(f_azon) as db');	
 		$this->db->from('hirlevel'); 	
 		$this->db->where('t_azon',$row->t_azon); 	
 		$query1 = $this->db->get();
 		$res1=$query1->result();
-		foreach($res as $row1)
+		array_push($array_res,"phase1");
+		foreach($res1 as $row1)
 		{
 			array_push($array_res,$row1->db);
 		}
@@ -273,6 +276,7 @@ return $di;
 		$this->db->where('t_azon',$row->t_azon); 	
 		$query2 = $this->db->get();
 		$res2=$query2->result();
+		array_push($array_res,"phase2");
 			foreach($res2 as $row2)
 			{
 				$this->db->select('e_mail');	
@@ -282,12 +286,14 @@ return $di;
 				$res3=$query3->result();
 				foreach($res3 as $row3)
 					{
+						array_push($array_res,$row3->e_mail);
 						
 					}
 			}
-		 
+		 array_push($array_res,"Vege");
 	 }
-	 return $res;
+	 
+	 return $array_res;
 
  }
  public function newThemLvl1()

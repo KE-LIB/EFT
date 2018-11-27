@@ -2,6 +2,7 @@
 class Admin extends CI_Controller {
 	   public function __construct()
        {
+		   
             parent::__construct();
             if(isset($_COOKIE['user']))
 			{}
@@ -172,6 +173,49 @@ public function create()
 		$this->load->model('Left_model');
 		$data['users']=$this->Left_model->getAllUser();
 		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$this->load->view('templates/headerAdmin', $data);
+		$this->load->view('admin/'.$page, $data);
+		$this->load->view('templates/footer', $data);
+	}
+	public function sendEmailContet($page="sendContent")
+	{
+		$this->output->enable_profiler(TRUE);
+		$error="";
+		$this->load->model('Left_model');
+		$this->load->helper(array('form', 'url','file'));
+		$contentsName=$this->input->post('mehet');
+		$fajl=$this->input->post('userfile');
+		$realpath=APPPATH."tjegyzek\\".$contentsName;
+		$realpath=$realpath."\\";
+		if(file_exists($realpath))
+		{
+		
+		}
+		else
+		{
+		 mkdir($realpath, 0775);
+		}
+				$config = array(
+		'upload_path' => $realpath,
+		'allowed_types' => "pdf",
+		'overwrite' => TRUE,
+		'file_name'=>$fajl,
+		);
+		$this->load->library('upload', $config);
+		error_reporting(E_ALL);
+		if($this->upload->do_upload('userfile'))
+		{
+		$error = array('upload_data' => $this->upload->data());
+	
+		}
+		else
+		{
+		$error = array('error' => $this->upload->display_errors());
+		
+		}
+		$data['contents']=$this->Left_model->getContent();
+		$data['title'] = "Az Egyetemi Könyvtár Elektronikus Folyóirat Tartalomjegyzék Szolgáltatása";
+		$data['error'] = $error;
 		$this->load->view('templates/headerAdmin', $data);
 		$this->load->view('admin/'.$page, $data);
 		$this->load->view('templates/footer', $data);
